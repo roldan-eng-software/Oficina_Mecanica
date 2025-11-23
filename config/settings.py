@@ -19,7 +19,20 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-this-in-produc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# Configuração de ALLOWED_HOSTS
+# Se ALLOWED_HOSTS estiver definido nas variáveis de ambiente, usa esse valor
+# Caso contrário, em produção aceita automaticamente domínios do Render e Railway
+if os.environ.get('ALLOWED_HOSTS'):
+    ALLOWED_HOSTS = [host.strip() for host in os.environ.get('ALLOWED_HOSTS').split(',')]
+elif not DEBUG:
+    # Em produção, aceita automaticamente domínios do Render e Railway
+    ALLOWED_HOSTS = [
+        '.onrender.com',  # Render.com - aceita qualquer subdomínio
+        '.railway.app',  # Railway - aceita qualquer subdomínio
+    ]
+else:
+    # Em desenvolvimento, apenas localhost
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
