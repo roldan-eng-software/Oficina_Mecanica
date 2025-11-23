@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes da Peça - Oficina Mecânica{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-box-seam"></i> {{ peca.codigo }}</h1>
+            <div>
+                <a href="{% url 'estoque:peca_update' peca.pk %}" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+                <a href="{% url 'estoque:peca_list' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Informações da Peça</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Código:</dt>
+                    <dd class="col-sm-8"><strong>{{ peca.codigo }}</strong></dd>
+                    
+                    <dt class="col-sm-4">Descrição:</dt>
+                    <dd class="col-sm-8">{{ peca.descricao }}</dd>
+                    
+                    <dt class="col-sm-4">Fabricante:</dt>
+                    <dd class="col-sm-8">{{ peca.fabricante|default:"-" }}</dd>
+                    
+                    <dt class="col-sm-4">Categoria:</dt>
+                    <dd class="col-sm-8">{{ peca.get_categoria_display }}</dd>
+                    
+                    <dt class="col-sm-4">Fornecedor:</dt>
+                    <dd class="col-sm-8">{{ peca.fornecedor|default:"-" }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Preços e Estoque</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Preço de Compra:</dt>
+                    <dd class="col-sm-8">R$ {{ peca.preco_compra|floatformat:2 }}</dd>
+                    
+                    <dt class="col-sm-4">Preço de Venda:</dt>
+                    <dd class="col-sm-8">R$ {{ peca.preco_venda|floatformat:2 }}</dd>
+                    
+                    <dt class="col-sm-4">Quantidade Atual:</dt>
+                    <dd class="col-sm-8">
+                        <strong>{{ peca.quantidade_atual }}</strong>
+                        {% if peca.estoque_baixo %}
+                        <span class="badge bg-danger">Estoque Baixo!</span>
+                        {% endif %}
+                    </dd>
+                    
+                    <dt class="col-sm-4">Quantidade Mínima:</dt>
+                    <dd class="col-sm-8">{{ peca.quantidade_minima }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Movimentações Recentes</h5>
+            </div>
+            <div class="card-body">
+                {% if movimentacoes %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Tipo</th>
+                                <th>Quantidade</th>
+                                <th>Motivo</th>
+                                <th>Usuário</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for mov in movimentacoes %}
+                            <tr>
+                                <td>{{ mov.data_movimentacao|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    <span class="badge bg-{% if mov.tipo == 'entrada' %}success{% else %}danger{% endif %}">
+                                        {{ mov.get_tipo_display }}
+                                    </span>
+                                </td>
+                                <td>{{ mov.quantidade }}</td>
+                                <td>{{ mov.motivo|default:"-" }}</td>
+                                <td>{{ mov.usuario_responsavel.user.get_full_name|default:mov.usuario_responsavel.user.username|default:"-" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">Nenhuma movimentação registrada.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

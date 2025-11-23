@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes do Serviço - Oficina Mecânica{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-tools"></i> Serviço #{{ servico.pk }}</h1>
+            <div>
+                <a href="{% url 'servicos:servico_update' servico.pk %}" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+                <a href="{% url 'servicos:servico_list' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Informações do Serviço</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Status:</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-{{ servico.status|default:'secondary' }}">
+                            {{ servico.get_status_display }}
+                        </span>
+                    </dd>
+                    
+                    <dt class="col-sm-4">Data Início:</dt>
+                    <dd class="col-sm-8">{{ servico.data_inicio|date:"d/m/Y H:i"|default:"-" }}</dd>
+                    
+                    <dt class="col-sm-4">Data Fim:</dt>
+                    <dd class="col-sm-8">{{ servico.data_fim|date:"d/m/Y H:i"|default:"-" }}</dd>
+                    
+                    <dt class="col-sm-4">Mão de Obra:</dt>
+                    <dd class="col-sm-8">R$ {{ servico.preco_mao_obra|floatformat:2 }}</dd>
+                    
+                    <dt class="col-sm-4">Desconto:</dt>
+                    <dd class="col-sm-8">R$ {{ servico.desconto|floatformat:2 }}</dd>
+                    
+                    <dt class="col-sm-4">Valor Total:</dt>
+                    <dd class="col-sm-8"><strong>R$ {{ servico.valor_total|floatformat:2 }}</strong></dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Veículo e Cliente</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Veículo:</dt>
+                    <dd class="col-sm-8">
+                        <a href="{% url 'veiculos:veiculo_detail' servico.agendamento.veiculo.pk %}">
+                            {{ servico.agendamento.veiculo.placa }}
+                        </a>
+                    </dd>
+                    
+                    <dt class="col-sm-4">Cliente:</dt>
+                    <dd class="col-sm-8">
+                        <a href="{% url 'clientes:cliente_detail' servico.agendamento.cliente.pk %}">
+                            {{ servico.agendamento.cliente.nome }}
+                        </a>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Descrição do Trabalho</h5>
+            </div>
+            <div class="card-body">
+                <p>{{ servico.descricao_trabalho|default:"Nenhuma descrição fornecida."|linebreaks }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Itens do Orçamento</h5>
+            </div>
+            <div class="card-body">
+                {% if orcamentos %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Quantidade</th>
+                                <th>Valor Unitário</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for orcamento in orcamentos %}
+                            <tr>
+                                <td>{{ orcamento.item }}</td>
+                                <td>{{ orcamento.quantidade }}</td>
+                                <td>R$ {{ orcamento.valor_unitario|floatformat:2 }}</td>
+                                <td>R$ {{ orcamento.subtotal|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3">Total de Peças:</th>
+                                <th>R$ {{ servico.orcamentos.all|length|default:0 }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">Nenhum item de orçamento cadastrado.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

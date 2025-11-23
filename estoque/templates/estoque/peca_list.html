@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}Estoque - Oficina Mecânica{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-box-seam"></i> Estoque de Peças</h1>
+            <div>
+                <a href="{% url 'estoque:movimentacao_create' %}" class="btn btn-info">
+                    <i class="bi bi-arrow-left-right"></i> Nova Movimentação
+                </a>
+                <a href="{% url 'estoque:peca_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Nova Peça
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <input type="text" name="search" class="form-control" 
+                               placeholder="Buscar..." value="{{ search }}">
+                    </div>
+                    <div class="col-md-2">
+                        <select name="categoria" class="form-select">
+                            <option value="">Todas as categorias</option>
+                            <option value="motor" {% if categoria == 'motor' %}selected{% endif %}>Motor</option>
+                            <option value="freios" {% if categoria == 'freios' %}selected{% endif %}>Freios</option>
+                            <option value="suspensao" {% if categoria == 'suspensao' %}selected{% endif %}>Suspensão</option>
+                            <option value="transmissao" {% if categoria == 'transmissao' %}selected{% endif %}>Transmissão</option>
+                            <option value="eletrica" {% if categoria == 'eletrica' %}selected{% endif %}>Elétrica</option>
+                            <option value="carroceria" {% if categoria == 'carroceria' %}selected{% endif %}>Carroceria</option>
+                            <option value="outro" {% if categoria == 'outro' %}selected{% endif %}>Outro</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select name="estoque_baixo" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="true" {% if estoque_baixo == 'true' %}selected{% endif %}>Estoque Baixo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <button type="submit" class="btn btn-outline-primary">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                        <a href="{% url 'estoque:peca_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-clockwise"></i> Limpar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabela de Peças -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if pecas %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Descrição</th>
+                                <th>Categoria</th>
+                                <th>Quantidade</th>
+                                <th>Preço Venda</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for peca in pecas %}
+                            <tr {% if peca.estoque_baixo %}class="table-warning"{% endif %}>
+                                <td><strong>{{ peca.codigo }}</strong></td>
+                                <td>{{ peca.descricao }}</td>
+                                <td>{{ peca.get_categoria_display }}</td>
+                                <td>
+                                    {{ peca.quantidade_atual }} / {{ peca.quantidade_minima }}
+                                    {% if peca.estoque_baixo %}
+                                    <i class="bi bi-exclamation-triangle text-danger"></i>
+                                    {% endif %}
+                                </td>
+                                <td>R$ {{ peca.preco_venda|floatformat:2 }}</td>
+                                <td>
+                                    {% if peca.ativo %}
+                                    <span class="badge bg-success">Ativo</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Inativo</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'estoque:peca_detail' peca.pk %}" 
+                                       class="btn btn-sm btn-info" title="Ver detalhes">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="{% url 'estoque:peca_update' peca.pk %}" 
+                                       class="btn btn-sm btn-warning" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginação -->
+                {% if is_paginated %}
+                <nav aria-label="Paginação">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}{% if categoria %}&categoria={{ categoria }}{% endif %}">Primeira</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if categoria %}&categoria={{ categoria }}{% endif %}">Anterior</a>
+                        </li>
+                        {% endif %}
+                        
+                        <li class="page-item active">
+                            <span class="page-link">
+                                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                            </span>
+                        </li>
+                        
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if categoria %}&categoria={{ categoria }}{% endif %}">Próxima</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if categoria %}&categoria={{ categoria }}{% endif %}">Última</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+                {% else %}
+                <p class="text-muted">Nenhuma peça encontrada.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

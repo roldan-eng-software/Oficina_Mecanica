@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes do Orçamento - Oficina Mecânica{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4"><i class="bi bi-file-text"></i> Orçamento</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Item:</dt>
+                    <dd class="col-sm-8">{{ orcamento.item }}</dd>
+                    
+                    <dt class="col-sm-4">Serviço:</dt>
+                    <dd class="col-sm-8">#{{ orcamento.servico.pk }}</dd>
+                    
+                    <dt class="col-sm-4">Quantidade:</dt>
+                    <dd class="col-sm-8">{{ orcamento.quantidade }}</dd>
+                    
+                    <dt class="col-sm-4">Valor Unitário:</dt>
+                    <dd class="col-sm-8">R$ {{ orcamento.valor_unitario|floatformat:2 }}</dd>
+                    
+                    <dt class="col-sm-4">Subtotal:</dt>
+                    <dd class="col-sm-8"><strong>R$ {{ orcamento.subtotal|floatformat:2 }}</strong></dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

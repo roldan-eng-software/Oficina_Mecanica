@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Oficina Mecânica{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </h1>
+    </div>
+</div>
+
+<!-- Cards de Estatísticas -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Total de Clientes</h6>
+                        <h2 class="mb-0">{{ total_clientes }}</h2>
+                    </div>
+                    <i class="bi bi-people fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Veículos Cadastrados</h6>
+                        <h2 class="mb-0">{{ total_veiculos }}</h2>
+                    </div>
+                    <i class="bi bi-car-front fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Agendamentos Hoje</h6>
+                        <h2 class="mb-0">{{ agendamentos_hoje }}</h2>
+                    </div>
+                    <i class="bi bi-calendar-check fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Serviços em Progresso</h6>
+                        <h2 class="mb-0">{{ servicos_em_progresso }}</h2>
+                    </div>
+                    <i class="bi bi-tools fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Segunda Linha de Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Estoque Baixo</h6>
+                        <h2 class="mb-0">{{ pecas_estoque_baixo }}</h2>
+                    </div>
+                    <i class="bi bi-exclamation-triangle fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-white bg-dark">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Contas a Receber Vencidas</h6>
+                        <h2 class="mb-0">{{ contas_receber_vencidas }}</h2>
+                    </div>
+                    <i class="bi bi-arrow-down-circle fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-white bg-secondary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Contas a Pagar Vencidas</h6>
+                        <h2 class="mb-0">{{ contas_pagar_vencidas }}</h2>
+                    </div>
+                    <i class="bi bi-arrow-up-circle fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Agendamentos Próximos (7 dias)</h6>
+                        <h2 class="mb-0">{{ agendamentos_proximos }}</h2>
+                    </div>
+                    <i class="bi bi-calendar-event fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Agendamentos Recentes -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-clock-history"></i> Agendamentos Recentes
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if agendamentos_recentes %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Cliente</th>
+                                <th>Veículo</th>
+                                <th>Mecânico</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for agendamento in agendamentos_recentes %}
+                            <tr>
+                                <td>{{ agendamento.data_hora|date:"d/m/Y H:i" }}</td>
+                                <td>{{ agendamento.cliente.nome }}</td>
+                                <td>{{ agendamento.veiculo.placa }}</td>
+                                <td>{{ agendamento.mecanico.user.get_full_name|default:agendamento.mecanico.user.username }}</td>
+                                <td>
+                                    <span class="badge bg-{{ agendamento.get_status_display|lower }}">
+                                        {{ agendamento.get_status_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">Nenhum agendamento recente.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

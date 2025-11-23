@@ -1,0 +1,91 @@
+language: "pt"
+
+reviews:
+  high_level_summary: true
+  review_status: "auto_approve"
+  path_filters:
+    - "**/*.py"
+    - "!venv/**"
+    - "!__pycache__/**"
+    - "!*.pyc"
+    - "!*.db"
+    - "!.env"
+    - "!node_modules/**"
+    - "!staticfiles/**"
+    - "!static_root/**"
+    - "!migrations/**"
+
+path_instructions:
+  - path: "**/models.py"
+    instructions: |
+      - Validar que modelos herdam de BaseModel quando apropriado
+      - Verificar uso de verbose_name e verbose_name_plural
+      - Validar relacionamentos com related_name explícito
+      - Verificar validators e constraints
+      - Validar docstrings descritivas em todas as classes
+      - Verificar uso de choices para campos com opções limitadas
+      - Validar propriedades e métodos customizados
+
+  - path: "**/views.py"
+    instructions: |
+      - Validar uso de Class-Based Views
+      - Verificar uso de LoginRequiredMixin
+      - Validar tratamento de erros com messages framework
+      - Verificar uso de select_related/prefetch_related para otimização
+      - Validar paginação em ListViews
+      - Verificar docstrings em views customizadas
+
+  - path: "**/urls.py"
+    instructions: |
+      - Validar definição de app_name
+      - Verificar nomenclatura RESTful
+      - Validar uso de namespaces
+      - Verificar padrão de URLs (lista, detail, create, update, delete)
+
+  - path: "**/forms.py"
+    instructions: |
+      - Validar uso de django-crispy-forms
+      - Verificar validação customizada (clean_*)
+      - Validar uso de FormHelper e Layout
+      - Verificar widgets apropriados
+      - Validar querysets filtrados em ForeignKey/ManyToMany
+
+  - path: "**/admin.py"
+    instructions: |
+      - Validar list_display, list_filter, search_fields
+      - Verificar readonly_fields
+      - Validar fieldsets organizados
+      - Verificar inlines quando apropriado
+      - Validar ações customizadas
+
+  - path: "**/templates/**/*.html"
+    instructions: |
+      - Validar uso de Bootstrap 5
+      - Verificar uso de {% load crispy_forms_tags %}
+      - Validar estrutura semântica HTML
+      - Verificar acessibilidade (labels, ARIA)
+      - Validar responsividade
+      - Verificar uso de ícones Bootstrap Icons
+      - Validar tratamento de mensagens do Django
+
+  - path: "config/settings.py"
+    instructions: |
+      - Validar configurações de segurança
+      - Verificar ALLOWED_HOSTS
+      - Validar configuração de banco de dados
+      - Verificar configurações de static e media
+      - Validar INSTALLED_APPS
+      - Verificar configurações de timezone e locale
+
+  - path: "core/static/**"
+    instructions: |
+      - Validar CSS seguindo padrões do projeto
+      - Verificar JavaScript para funcionalidades básicas
+      - Validar organização de arquivos estáticos
+
+  - path: "requirements.txt"
+    instructions: |
+      - Validar versões especificadas
+      - Verificar dependências necessárias
+      - Validar formato correto
+

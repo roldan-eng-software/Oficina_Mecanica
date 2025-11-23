@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Movimentações de Estoque - Oficina Mecânica{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-arrow-left-right"></i> Movimentações de Estoque</h1>
+            <a href="{% url 'estoque:movimentacao_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Nova Movimentação
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if movimentacoes %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Peça</th>
+                                <th>Tipo</th>
+                                <th>Quantidade</th>
+                                <th>Motivo</th>
+                                <th>Usuário</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for mov in movimentacoes %}
+                            <tr>
+                                <td>{{ mov.data_movimentacao|date:"d/m/Y H:i" }}</td>
+                                <td>{{ mov.peca.codigo }} - {{ mov.peca.descricao }}</td>
+                                <td>
+                                    <span class="badge bg-{% if mov.tipo == 'entrada' %}success{% else %}danger{% endif %}">
+                                        {{ mov.get_tipo_display }}
+                                    </span>
+                                </td>
+                                <td>{{ mov.quantidade }}</td>
+                                <td>{{ mov.motivo|default:"-" }}</td>
+                                <td>{{ mov.usuario_responsavel.user.get_full_name|default:mov.usuario_responsavel.user.username|default:"-" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">Nenhuma movimentação encontrada.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

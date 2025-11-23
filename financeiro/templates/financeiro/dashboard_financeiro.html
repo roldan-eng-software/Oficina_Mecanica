@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Financeiro - Oficina Mecânica{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="bi bi-cash-coin"></i> Dashboard Financeiro
+        </h1>
+    </div>
+</div>
+
+<!-- Cards de Resumo -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h6 class="card-title">Total a Receber</h6>
+                <h2 class="mb-0">R$ {{ total_receber|floatformat:2 }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h6 class="card-title">Recebido no Mês</h6>
+                <h2 class="mb-0">R$ {{ total_recebido_mes|floatformat:2 }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h6 class="card-title">Total a Pagar</h6>
+                <h2 class="mb-0">R$ {{ total_pagar|floatformat:2 }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h6 class="card-title">Saldo do Mês</h6>
+                <h2 class="mb-0">R$ {{ saldo_mes|floatformat:2 }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alertas -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        {% if contas_vencidas_receber > 0 %}
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle"></i> 
+            <strong>{{ contas_vencidas_receber }}</strong> conta(s) a receber vencida(s)
+            <a href="{% url 'financeiro:conta_receber_list' %}?vencidas=true" class="alert-link">Ver detalhes</a>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-6">
+        {% if contas_vencidas_pagar > 0 %}
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle"></i> 
+            <strong>{{ contas_vencidas_pagar }}</strong> conta(s) a pagar vencida(s)
+            <a href="{% url 'financeiro:conta_pagar_list' %}?vencidas=true" class="alert-link">Ver detalhes</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Links Rápidos -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Contas a Receber</h5>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'financeiro:conta_receber_list' %}" class="btn btn-success">
+                    <i class="bi bi-list"></i> Ver Todas
+                </a>
+                <a href="{% url 'financeiro:conta_receber_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Nova Conta
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Contas a Pagar</h5>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'financeiro:conta_pagar_list' %}" class="btn btn-danger">
+                    <i class="bi bi-list"></i> Ver Todas
+                </a>
+                <a href="{% url 'financeiro:conta_pagar_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Nova Conta
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes do Agendamento - Oficina Mecânica{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-calendar-check"></i> Agendamento</h1>
+            <div>
+                <a href="{% url 'agendamentos:agendamento_update' agendamento.pk %}" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+                <a href="{% url 'agendamentos:agendamento_delete' agendamento.pk %}" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Excluir
+                </a>
+                <a href="{% url 'agendamentos:agendamento_list' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Informações do Agendamento</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Data/Hora:</dt>
+                    <dd class="col-sm-8"><strong>{{ agendamento.data_hora|date:"d/m/Y H:i" }}</strong></dd>
+                    
+                    <dt class="col-sm-4">Status:</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-{{ agendamento.status|default:'secondary' }}">
+                            {{ agendamento.get_status_display }}
+                        </span>
+                    </dd>
+                    
+                    <dt class="col-sm-4">Mecânico:</dt>
+                    <dd class="col-sm-8">{{ agendamento.mecanico.user.get_full_name|default:agendamento.mecanico.user.username|default:"Não atribuído" }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Veículo e Cliente</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Veículo:</dt>
+                    <dd class="col-sm-8">
+                        <a href="{% url 'veiculos:veiculo_detail' agendamento.veiculo.pk %}">
+                            {{ agendamento.veiculo.placa }} - {{ agendamento.veiculo.marca }} {{ agendamento.veiculo.modelo }}
+                        </a>
+                    </dd>
+                    
+                    <dt class="col-sm-4">Cliente:</dt>
+                    <dd class="col-sm-8">
+                        <a href="{% url 'clientes:cliente_detail' agendamento.cliente.pk %}">
+                            {{ agendamento.cliente.nome }}
+                        </a>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Descrição do Problema</h5>
+            </div>
+            <div class="card-body">
+                <p>{{ agendamento.descricao_problema|default:"Nenhuma descrição fornecida."|linebreaks }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

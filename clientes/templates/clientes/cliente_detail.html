@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes do Cliente - Oficina Mecânica{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-person"></i> {{ cliente.nome }}</h1>
+            <div>
+                <a href="{% url 'clientes:cliente_update' cliente.pk %}" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+                <a href="{% url 'clientes:cliente_delete' cliente.pk %}" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Excluir
+                </a>
+                <a href="{% url 'clientes:cliente_list' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Informações Pessoais</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Nome:</dt>
+                    <dd class="col-sm-8">{{ cliente.nome }}</dd>
+                    
+                    <dt class="col-sm-4">CPF/CNPJ:</dt>
+                    <dd class="col-sm-8">{{ cliente.cpf_cnpj }}</dd>
+                    
+                    <dt class="col-sm-4">Telefone:</dt>
+                    <dd class="col-sm-8">{{ cliente.telefone }}</dd>
+                    
+                    <dt class="col-sm-4">Email:</dt>
+                    <dd class="col-sm-8">{{ cliente.email|default:"-" }}</dd>
+                    
+                    <dt class="col-sm-4">Status:</dt>
+                    <dd class="col-sm-8">
+                        {% if cliente.ativo %}
+                        <span class="badge bg-success">Ativo</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Inativo</span>
+                        {% endif %}
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Endereço</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Endereço:</dt>
+                    <dd class="col-sm-8">{{ cliente.endereco|default:"-" }}</dd>
+                    
+                    <dt class="col-sm-4">Cidade:</dt>
+                    <dd class="col-sm-8">{{ cliente.cidade|default:"-" }}</dd>
+                    
+                    <dt class="col-sm-4">Estado:</dt>
+                    <dd class="col-sm-8">{{ cliente.estado|default:"-" }}</dd>
+                    
+                    <dt class="col-sm-4">CEP:</dt>
+                    <dd class="col-sm-8">{{ cliente.cep|default:"-" }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Veículos ({{ cliente.total_veiculos }})</h5>
+            </div>
+            <div class="card-body">
+                {% if cliente.veiculos_ativos %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Placa</th>
+                                <th>Marca</th>
+                                <th>Modelo</th>
+                                <th>Ano</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for veiculo in cliente.veiculos_ativos %}
+                            <tr>
+                                <td><a href="{% url 'veiculos:veiculo_detail' veiculo.pk %}">{{ veiculo.placa }}</a></td>
+                                <td>{{ veiculo.marca }}</td>
+                                <td>{{ veiculo.modelo }}</td>
+                                <td>{{ veiculo.ano }}</td>
+                                <td>{{ veiculo.get_status_display }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">Nenhum veículo cadastrado.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

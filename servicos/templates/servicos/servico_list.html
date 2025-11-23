@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}Serviços - Oficina Mecânica{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-tools"></i> Serviços</h1>
+            <a href="{% url 'servicos:servico_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Novo Serviço
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" name="search" class="form-control" 
+                               placeholder="Buscar..." value="{{ search }}">
+                    </div>
+                    <div class="col-md-3">
+                        <select name="status" class="form-select">
+                            <option value="">Todos os status</option>
+                            <option value="orcamento" {% if status == 'orcamento' %}selected{% endif %}>Orçamento</option>
+                            <option value="em_execucao" {% if status == 'em_execucao' %}selected{% endif %}>Em Execução</option>
+                            <option value="concluido" {% if status == 'concluido' %}selected{% endif %}>Concluído</option>
+                            <option value="faturado" {% if status == 'faturado' %}selected{% endif %}>Faturado</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <button type="submit" class="btn btn-outline-primary">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                        <a href="{% url 'servicos:servico_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-clockwise"></i> Limpar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabela de Serviços -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if servicos %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Veículo</th>
+                                <th>Cliente</th>
+                                <th>Status</th>
+                                <th>Valor Total</th>
+                                <th>Data Início</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for servico in servicos %}
+                            <tr>
+                                <td>#{{ servico.pk }}</td>
+                                <td>{{ servico.agendamento.veiculo.placa }}</td>
+                                <td>{{ servico.agendamento.cliente.nome }}</td>
+                                <td>
+                                    <span class="badge bg-{{ servico.status|default:'secondary' }}">
+                                        {{ servico.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>R$ {{ servico.valor_total|floatformat:2 }}</td>
+                                <td>{{ servico.data_inicio|date:"d/m/Y H:i"|default:"-" }}</td>
+                                <td>
+                                    <a href="{% url 'servicos:servico_detail' servico.pk %}" 
+                                       class="btn btn-sm btn-info" title="Ver detalhes">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="{% url 'servicos:servico_update' servico.pk %}" 
+                                       class="btn btn-sm btn-warning" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginação -->
+                {% if is_paginated %}
+                <nav aria-label="Paginação">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}">Primeira</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}">Anterior</a>
+                        </li>
+                        {% endif %}
+                        
+                        <li class="page-item active">
+                            <span class="page-link">
+                                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                            </span>
+                        </li>
+                        
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}">Próxima</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}">Última</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+                {% else %}
+                <p class="text-muted">Nenhum serviço encontrado.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
