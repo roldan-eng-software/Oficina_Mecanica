@@ -98,12 +98,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# Railway fornece DATABASE_URL ou variáveis individuais
+# Suporte para Railway, Render.com e outros serviços
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 if DATABASE_URL:
     # Parse DATABASE_URL (formato: postgresql://user:password@host:port/dbname)
-    # Railway pode usar postgres:// ou postgresql://
+    # Railway e Render podem usar postgres:// ou postgresql://
     if DATABASE_URL.startswith('postgres://'):
         DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
     
@@ -122,7 +122,7 @@ if DATABASE_URL:
         }
     }
 elif os.environ.get('PGHOST'):
-    # Usar variáveis individuais do Railway PostgreSQL
+    # Usar variáveis individuais do PostgreSQL (Railway, Render, etc)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -134,6 +134,15 @@ elif os.environ.get('PGHOST'):
             'OPTIONS': {
                 'connect_timeout': 10,
             },
+        }
+    }
+elif os.environ.get('RENDER'):
+    # Render.com sem DATABASE_URL configurado - usar SQLite temporariamente
+    # IMPORTANTE: Configure o PostgreSQL no Render e adicione DATABASE_URL
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 else:
