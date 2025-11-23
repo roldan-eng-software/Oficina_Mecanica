@@ -12,5 +12,8 @@ python manage.py collectstatic --noinput
 echo "Executando migrações..."
 python manage.py migrate --noinput
 
+echo "Criando superusuário se não existir..."
+python manage.py create_superuser_if_not_exists
+
 echo "Build concluído!"
 
