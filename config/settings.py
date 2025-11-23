@@ -20,19 +20,23 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-this-in-produc
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # Configuração de ALLOWED_HOSTS
-# Se ALLOWED_HOSTS estiver definido nas variáveis de ambiente, usa esse valor
-# Caso contrário, em produção aceita automaticamente domínios do Render e Railway
+# Sempre inclui domínios do Render e Railway para facilitar deploy
+ALLOWED_HOSTS = [
+    '.onrender.com',  # Render.com - aceita qualquer subdomínio
+    '.railway.app',  # Railway - aceita qualquer subdomínio
+]
+
+# Se ALLOWED_HOSTS estiver definido nas variáveis de ambiente, adiciona aos existentes
 if os.environ.get('ALLOWED_HOSTS'):
-    ALLOWED_HOSTS = [host.strip() for host in os.environ.get('ALLOWED_HOSTS').split(',')]
-elif not DEBUG:
-    # Em produção, aceita automaticamente domínios do Render e Railway
-    ALLOWED_HOSTS = [
-        '.onrender.com',  # Render.com - aceita qualquer subdomínio
-        '.railway.app',  # Railway - aceita qualquer subdomínio
-    ]
-else:
-    # Em desenvolvimento, apenas localhost
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    custom_hosts = [host.strip() for host in os.environ.get('ALLOWED_HOSTS').split(',')]
+    ALLOWED_HOSTS.extend(custom_hosts)
+    # Remove duplicatas mantendo a ordem
+    ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
+
+# Em desenvolvimento local, adiciona localhost
+if DEBUG and not os.environ.get('RENDER') and not os.environ.get('RAILWAY_ENVIRONMENT'):
+    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
+    ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
 
 
 # Application definition
