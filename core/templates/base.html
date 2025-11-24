@@ -62,6 +62,26 @@
                             <i class="bi bi-cash-coin"></i> Financeiro
                         </a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="relatoriosDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-file-earmark-pdf"></i> Relatórios
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="relatoriosDropdown">
+                            <li><a class="dropdown-item" href="{% url 'relatorios:clientes_print' %}">Clientes (Imprimir)</a></li>
+                            <li><a class="dropdown-item" href="{% url 'relatorios:veiculos_print' %}">Veículos (Imprimir)</a></li>
+                            <li><a class="dropdown-item" href="{% url 'relatorios:agendamentos_print' %}">Agendamentos (Imprimir)</a></li>
+                            <li><a class="dropdown-item" href="{% url 'relatorios:servicos_print' %}">Serviços (Imprimir)</a></li>
+                            <li><a class="dropdown-item" href="{% url 'relatorios:estoque_print' %}">Estoque (Imprimir)</a></li>
+                            <li><a class="dropdown-item" href="{% url 'relatorios:financeiro_print' %}">Financeiro (Imprimir)</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'relatorios:clientes_pdf' %}">Clientes (PDF)</a></li>
+                            <li><a class="dropdown-item" href="{% url 'relatorios:veiculos_pdf' %}">Veículos (PDF)</a></li>
+                            <li><a class="dropdown-item" href="{% url 'relatorios:agendamentos_pdf' %}">Agendamentos (PDF)</a></li>
+                            <li><a class="dropdown-item" href="{% url 'relatorios:servicos_pdf' %}">Serviços (PDF)</a></li>
+                            <li><a class="dropdown-item" href="{% url 'relatorios:estoque_pdf' %}">Estoque (PDF)</a></li>
+                            <li><a class="dropdown-item" href="{% url 'relatorios:financeiro_pdf' %}">Financeiro (PDF)</a></li>
+                        </ul>
+                    </li>
                 </ul>
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}

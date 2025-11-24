@@ -194,3 +194,5 @@ python manage.py shell
 - [ ] Domínio configurado
 - [ ] Aplicação testada e funcionando
 
+
+

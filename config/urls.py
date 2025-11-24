@@ -15,6 +15,7 @@ urlpatterns = [
     path('servicos/', include('servicos.urls')),
     path('estoque/', include('estoque.urls')),
     path('financeiro/', include('financeiro.urls')),
+    path('relatorios/', include('relatorios.urls')),
 ]
 
 if settings.DEBUG:

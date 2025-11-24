@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <title>{% block title %}Relatório{% endblock %}</title>
+    <style>
+        /* Estilo simples e otimizado para impressão */
+        @media print {
+            .no-print { display: none !important; }
+        }
+        body { font-family: Arial, Helvetica, sans-serif; margin: 20px; color: #000; }
+        header { text-align: center; margin-bottom: 12px; }
+        h1 { font-size: 18px; margin: 0 0 6px 0; }
+        p.meta { font-size: 12px; margin: 0 0 10px 0; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        table th, table td { border: 1px solid #333; padding: 6px; text-align: left; }
+        table th { background: #eee; }
+        .small { font-size: 11px; }
+        .right { text-align: right; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>{% block header %}Relatório{% endblock %}</h1>
+        <p class="meta">Gerado por: Oficina Mecânica — Conferência Impressa</p>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="no-print">
+        <p class="small">Use o comando de impressão do navegador (Ctrl+P) para imprimir este relatório.</p>
+    </footer>
+</body>
+</html>

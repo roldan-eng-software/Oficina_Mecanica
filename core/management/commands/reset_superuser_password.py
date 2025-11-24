@@ -67,3 +67,5 @@ class Command(BaseCommand):
                 self.style.ERROR(f'Erro ao resetar senha: {e}')
             )
 
+
+

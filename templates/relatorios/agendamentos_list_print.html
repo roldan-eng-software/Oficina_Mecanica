@@ -1,0 +1,29 @@
+{% extends 'relatorios/print_base.html' %}
+{% block title %}Agendamentos - Relatório{% endblock %}
+{% block header %}Lista de Agendamentos{% endblock %}
+{% block content %}
+<table>
+    <thead>
+        <tr>
+            <th>Data / Hora</th>
+            <th>Veículo</th>
+            <th>Cliente</th>
+            <th>Mecânico</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for a in agendamentos %}
+        <tr>
+            <td>{{ a.data_hora|date:"d/m/Y H:i" }}</td>
+            <td>{{ a.veiculo.placa }}</td>
+            <td>{{ a.cliente.nome }}</td>
+            <td>{{ a.mecanico.get_full_name|default:'-' }}</td>
+            <td>{{ a.get_status_display }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">Nenhum agendamento encontrado.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

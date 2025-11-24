@@ -1,0 +1,29 @@
+{% extends 'relatorios/print_base.html' %}
+{% block title %}Veículos - Relatório{% endblock %}
+{% block header %}Lista de Veículos{% endblock %}
+{% block content %}
+<table>
+    <thead>
+        <tr>
+            <th>Placa</th>
+            <th>Proprietário</th>
+            <th>Marca / Modelo</th>
+            <th>Ano</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for v in veiculos %}
+        <tr>
+            <td>{{ v.placa }}</td>
+            <td>{{ v.cliente.nome }}</td>
+            <td>{{ v.marca }} {{ v.modelo }}</td>
+            <td>{{ v.ano }}</td>
+            <td>{{ v.get_status_display }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">Nenhum veículo encontrado.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
