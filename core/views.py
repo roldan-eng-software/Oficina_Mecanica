@@ -9,6 +9,8 @@ from django.db.models import Count, Q, F
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 import os
 
@@ -18,6 +20,7 @@ from agendamentos.models import Agendamento
 from servicos.models import Servico
 from estoque.models import Peca
 from financeiro.models import ContaReceber, ContaPagar
+from .services import CEPService
 
 User = get_user_model()
 
@@ -169,4 +172,47 @@ def reset_superuser_view(request):
         return render(request, 'core/reset_superuser.html', {'require_key': True})
     
     return render(request, 'core/reset_superuser.html')
+
+
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def buscar_cep_api(request):
+    """
+    Endpoint para buscar endereço por CEP via AJAX.
+    
+    Retorna JSON com:
+    {
+        'success': bool,
+        'data': {
+            'rua': str,
+            'bairro': str,
+            'cidade': str,
+            'estado': str,
+            'cep': str
+        },
+        'error': str (se success=False)
+    }
+    """
+    cep = request.GET.get('cep') or request.POST.get('cep', '').strip()
+    
+    if not cep:
+        return JsonResponse({
+            'success': False,
+            'error': 'CEP é obrigatório'
+        }, status=400)
+    
+    # Busca endereço usando o serviço
+    endereco = CEPService.buscar_endereco(cep)
+    
+    if endereco:
+        return JsonResponse({
+            'success': True,
+            'data': endereco
+        })
+    else:
+        return JsonResponse({
+            'success': False,
+            'error': 'CEP não encontrado ou inválido'
+        }, status=404)
+
 

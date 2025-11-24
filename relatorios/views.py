@@ -3,11 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 
+WEASYPRINT_AVAILABLE = False
 try:
     from weasyprint import HTML, CSS
     WEASYPRINT_AVAILABLE = True
 except ImportError:
-    WEASYPRINT_AVAILABLE = False
+    pass
 
 from clientes.models import Cliente
 from veiculos.models import Veiculo
