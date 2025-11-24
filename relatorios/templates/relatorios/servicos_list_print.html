@@ -1,0 +1,31 @@
+{% extends 'relatorios/print_base.html' %}
+{% block title %}Serviços - Relatório{% endblock %}
+{% block header %}Lista de Serviços{% endblock %}
+{% block content %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Veículo</th>
+            <th>Data Início</th>
+            <th>Data Fim</th>
+            <th>Valor Total</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in servicos %}
+        <tr>
+            <td>{{ s.pk }}</td>
+            <td>{{ s.agendamento.veiculo.placa }}</td>
+            <td>{% if s.data_inicio %}{{ s.data_inicio|date:"d/m/Y H:i" }}{% else %}-{% endif %}</td>
+            <td>{% if s.data_fim %}{{ s.data_fim|date:"d/m/Y H:i" }}{% else %}-{% endif %}</td>
+            <td class="right">R$ {{ s.valor_total }}</td>
+            <td>{{ s.get_status_display }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">Nenhum serviço encontrado.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
