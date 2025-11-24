@@ -1,6 +1,6 @@
-# 🔐 Como Criar Superusuário no Render
+# 🔐 Como Criar e Resetar Superusuário no Render
 
-Como o shell do Render requer assinatura paga, aqui estão **3 maneiras** de criar o superusuário:
+Como o shell do Render requer assinatura paga, aqui estão **múltiplas maneiras** de criar e resetar o superusuário:
 
 ## Opção 1: Via Variáveis de Ambiente (Recomendado) ⭐
 
@@ -75,6 +75,49 @@ export DJANGO_SUPERUSER_EMAIL=admin@example.com
 export DJANGO_SUPERUSER_PASSWORD=sua-senha
 python manage.py create_superuser_if_not_exists
 ```
+
+---
+
+## 🔄 Resetar Senha do Superusuário
+
+Se você já tem um superusuário mas esqueceu a senha ou precisa resetá-la:
+
+### Opção A: Via Interface Web (Mais Rápida) ⚡
+
+1. Acesse a URL:
+   ```
+   https://seu-app.onrender.com/reset-superuser/?key=temporary-key-change-me
+   ```
+
+2. Preencha o formulário:
+   - **Username:** admin (ou o username do seu superusuário)
+   - **Nova Senha:** escolha uma senha segura
+
+3. Clique em "Resetar Senha"
+
+4. Faça login no `/admin` com a nova senha
+
+### Opção B: Via Variáveis de Ambiente
+
+1. No Render, configure a variável:
+   ```
+   DJANGO_SUPERUSER_PASSWORD=nova-senha-segura
+   ```
+
+2. Execute o comando (se tiver acesso ao shell):
+   ```bash
+   python manage.py reset_superuser_password --username admin --password nova-senha-segura
+   ```
+
+3. Ou faça um redeploy - o comando será executado automaticamente durante o build
+
+### Opção C: Deletar e Recriar
+
+Se preferir começar do zero:
+
+1. Use a view de reset (Opção A) para resetar a senha
+2. Ou delete o superusuário via Django admin (se conseguir acessar)
+3. Use a Opção 1 ou 2 acima para criar um novo
 
 ## 🔒 Segurança
 

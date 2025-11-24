@@ -16,4 +16,8 @@ echo "Criando superusuário se não existir..."
 python manage.py create_superuser_if_not_exists
 
 echo "Build concluído!"
+echo ""
+echo "Para resetar senha do admin, use:"
+echo "  - Via web: /reset-superuser/?key=temporary-key-change-me"
+echo "  - Ou configure DJANGO_SUPERUSER_PASSWORD nas variáveis de ambiente e faça redeploy"
 

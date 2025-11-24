@@ -88,8 +88,8 @@ def create_superuser_view(request):
     """
     # Verifica se já existe superusuário
     if User.objects.filter(is_superuser=True).exists():
-        messages.error(request, 'Superusuário já existe. Esta view não está mais disponível.')
-        return redirect('core:dashboard')
+        messages.error(request, 'Superusuário já existe. Use a opção de resetar senha.')
+        return redirect('core:reset_superuser')
     
     # Verifica chave secreta (opcional, mas recomendado)
     secret_key = os.environ.get('CREATE_SUPERUSER_KEY', 'temporary-key-change-me')
@@ -126,4 +126,47 @@ def create_superuser_view(request):
         return render(request, 'core/create_superuser.html', {'require_key': True})
     
     return render(request, 'core/create_superuser.html')
+
+
+@require_http_methods(["GET", "POST"])
+def reset_superuser_view(request):
+    """
+    View temporária para resetar senha do superusuário via web.
+    IMPORTANTE: Remova esta view após usar por questões de segurança!
+    """
+    # Verifica chave secreta
+    secret_key = os.environ.get('CREATE_SUPERUSER_KEY', 'temporary-key-change-me')
+    provided_key = request.GET.get('key') or request.POST.get('key')
+    
+    if request.method == 'POST':
+        if provided_key != secret_key:
+            messages.error(request, 'Chave de acesso inválida.')
+            return render(request, 'core/reset_superuser.html', {'error': 'Chave inválida'})
+        
+        username = request.POST.get('username', 'admin')
+        password = request.POST.get('password')
+        
+        if not password:
+            messages.error(request, 'Senha é obrigatória.')
+            return render(request, 'core/reset_superuser.html', {'error': 'Senha obrigatória'})
+        
+        try:
+            user = User.objects.get(username=username, is_superuser=True)
+            user.set_password(password)
+            user.save()
+            messages.success(request, f'Senha do superusuário "{username}" resetada com sucesso!')
+            return redirect('admin:login')
+        except User.DoesNotExist:
+            messages.error(request, f'Superusuário "{username}" não encontrado.')
+            return render(request, 'core/reset_superuser.html', {'error': f'Usuário "{username}" não encontrado'})
+        except Exception as e:
+            messages.error(request, f'Erro ao resetar senha: {e}')
+            return render(request, 'core/reset_superuser.html', {'error': str(e)})
+    
+    # GET request - mostra formulário
+    if provided_key != secret_key:
+        messages.warning(request, 'Acesso requer chave secreta via parâmetro ?key=')
+        return render(request, 'core/reset_superuser.html', {'require_key': True})
+    
+    return render(request, 'core/reset_superuser.html')
 
