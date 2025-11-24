@@ -58,8 +58,26 @@ class Servico(BaseModel):
 
     def save(self, *args, **kwargs):
         """Atualiza o valor total antes de salvar."""
-        if not self.pk or 'preco_mao_obra' in kwargs.get('update_fields', []) or 'desconto' in kwargs.get('update_fields', []):
+        # Se ainda não tem PK (instância nova), salva primeiro para obter o PK
+        # e só então calcula o valor_total usando os orçamentos relacionados.
+        update_fields = kwargs.get('update_fields') or []
+
+        if not self.pk:
+            # Salva sem calcular (não é possível acessar relação reversa antes do PK)
+            super().save(*args, **kwargs)
+            # Após salvar, calcula e atualiza apenas o campo valor_total
+            try:
+                self.calcular_valor_total()
+                super().save(update_fields=['valor_total'])
+            except Exception:
+                # Em caso de erro ao calcular, apenas ignore para não quebrar o fluxo de criação
+                pass
+            return
+
+        # Para instâncias existentes, recalcula quando preço ou desconto forem atualizados
+        if 'preco_mao_obra' in update_fields or 'desconto' in update_fields:
             self.calcular_valor_total()
+
         super().save(*args, **kwargs)
 
     def gerar_orcamento_pdf(self):

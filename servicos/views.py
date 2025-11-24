@@ -11,6 +11,7 @@ from django.db.models import Q, Sum
 
 from .models import Servico, Orcamento
 from .forms import ServicoForm, OrcamentoForm
+from agendamentos.models import Agendamento
 
 
 class ServicoListView(LoginRequiredMixin, ListView):
@@ -62,6 +63,18 @@ class ServicoCreateView(LoginRequiredMixin, CreateView):
     form_class = ServicoForm
     template_name = 'servicos/servico_form.html'
     success_url = reverse_lazy('servicos:servico_list')
+
+    def get_initial(self):
+        """Pré-seleciona agendamento se fornecido."""
+        initial = super().get_initial()
+        agendamento_id = self.request.GET.get('agendamento')
+        if agendamento_id:
+            try:
+                agendamento = Agendamento.objects.get(id=agendamento_id, ativo=True)
+                initial['agendamento'] = agendamento
+            except Agendamento.DoesNotExist:
+                pass
+        return initial
 
     def form_valid(self, form):
         messages.success(self.request, 'Serviço criado com sucesso!')
