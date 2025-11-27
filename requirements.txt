@@ -12,5 +12,7 @@ requests==2.31.0
 # Produção
 gunicorn==21.2.0
 psycopg2-binary==2.9.9
+# MySQL connector (pure-Python, easier to install on CI/Windows)
+PyMySQL==1.0.3
 whitenoise==6.6.0
 

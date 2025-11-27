@@ -117,25 +117,48 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 if DATABASE_URL:
-    # Parse DATABASE_URL (formato: postgresql://user:password@host:port/dbname)
-    # Railway e Render podem usar postgres:// ou postgresql://
+    # Parse DATABASE_URL (formatos: postgresql://, mysql://, mysql+pymysql://)
+    # Railway/Render podem usar postgres:// ou postgresql://
     if DATABASE_URL.startswith('postgres://'):
         DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
-    
+
     parsed = urlparse(DATABASE_URL)
+    scheme = parsed.scheme
+
+    # PostgreSQL
+    if scheme.startswith('postgres') or scheme == 'postgresql':
+        ENGINE = 'django.db.backends.postgresql'
+        default_port = '5432'
+
+    # MySQL (supports mysql:// and mysql+pymysql://)
+    elif scheme.startswith('mysql'):
+        ENGINE = 'django.db.backends.mysql'
+        default_port = '3306'
+
+    else:
+        raise ImproperlyConfigured(f'Unsupported DATABASE_URL scheme: {scheme}')
+
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': parsed.path[1:] if parsed.path.startswith('/') else parsed.path,  # Remove a barra inicial
+            'ENGINE': ENGINE,
+            'NAME': parsed.path[1:] if parsed.path.startswith('/') else parsed.path,
             'USER': parsed.username,
             'PASSWORD': parsed.password,
             'HOST': parsed.hostname,
-            'PORT': parsed.port or '5432',
+            'PORT': parsed.port or default_port,
             'OPTIONS': {
                 'connect_timeout': 10,
             },
         }
     }
+
+    # MySQL specific options
+    if ENGINE == 'django.db.backends.mysql':
+        # Use utf8mb4 and strict mode by default
+        DATABASES['default']['OPTIONS'].update({
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
+        })
 elif os.environ.get('PGHOST'):
     # Usar variáveis individuais do PostgreSQL (Railway, Render, etc)
     DATABASES = {
