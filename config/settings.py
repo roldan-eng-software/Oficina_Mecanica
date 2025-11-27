@@ -5,6 +5,7 @@ Django settings for Oficina Mecanica project.
 from pathlib import Path
 import os
 from urllib.parse import urlparse
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -14,10 +15,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-this-in-production-!@#$%^&*()')
+# In production we require a strong SECRET_KEY via environment variable.
+# In development a short fallback is allowed to reduce friction.
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# Default to True for local development unless explicitly set otherwise.
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+
+# Enforce a strong SECRET_KEY in production
+if not DEBUG:
+    if not SECRET_KEY:
+        raise ImproperlyConfigured('The SECRET_KEY environment variable must be set in production.')
+    if len(SECRET_KEY) < 50 or (isinstance(SECRET_KEY, str) and SECRET_KEY.startswith('django-insecure-')):
+        raise ImproperlyConfigured('The SECRET_KEY must be at least 50 chars and must not start with "django-insecure-".')
+else:
+    # In development allow a default key if none provided to avoid friction.
+    SECRET_KEY = SECRET_KEY or 'django-insecure-change-this-in-development-please-set-SECRET_KEY'
 
 # Configuração de ALLOWED_HOSTS
 # Sempre inclui domínios do Render e Railway para facilitar deploy
